@@ -22,7 +22,7 @@ services:
       - esnet
     deploy:
       mode: 'replicated'
-      replicas: 3
+      replicas: 1
       resources:
         limits:
           memory: 1g
@@ -32,7 +32,7 @@ services:
             hard: -1
 
   kibana:
-    image: 'kibana:4'
+    image: 'fxdgear/kibana:4'
     networks:
       - esnet
     deploy:
