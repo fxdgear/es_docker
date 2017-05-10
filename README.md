@@ -36,18 +36,20 @@ To run elasticsearch in normal mode just run
 docker-compose up -d
 ```
 
-## How to use
+## How To Use
 
 Lets make sure that ES is healthy.
 
 ```
 $ docker ps
 
-CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS                    PORTS                            NAMES
-d96fbbcbc909        nginx:1                       "/bin/bash -c 'ech..."   20 minutes ago      Up 20 minutes             80/tcp, 0.0.0.0:9200->9200/tcp   elasticsearch_nginx_1
-3cf9e2564053        fxdgear/elasticsearch:5.3.0   "/docker-entrypoin..."   20 minutes ago      Up 20 minutes (healthy)   9200/tcp, 9300/tcp               elasticsearch_elasticsearch_1
+CONTAINER ID        IMAGE                       COMMAND                  CREATED             STATUS                     PORTS                                                    NAMES
+62ffbb76f7cf        fxdgear/kibana:5.3          "/docker-entrypoin..."   8 minutes ago       Up 8 minutes (healthy)     5601/tcp                                                 elasticsearch53_kibana_1
+b47276e4a976        nginx:1                     "/bin/bash -c 'ech..."   8 minutes ago       Up 8 minutes               0.0.0.0:5601->5601/tcp, 80/tcp, 0.0.0.0:9200->9200/tcp   elasticsearch53_nginx_1
+e6204accab1d        fxdgear/elasticsearch:5.3   "/docker-entrypoin..."   8 minutes ago       Up 8 minutes (healthy)     9200/tcp, 9300/tcp                                       elasticsearch53_elasticsearch_1
 ```
 
 You should see a `(healthy)` in the `STATUS` column.
 
-You can now acess [`http://localhost:9200`](http://localhost:9200) and see that the ES cluster is responding.
+You can now access [`http://localhost:9200`](http://localhost:9200) and see that the ES cluster is responding.
+You can now access [`http://localhost:5601`](http://localhost:5601) and see that the Kibana is responding.
