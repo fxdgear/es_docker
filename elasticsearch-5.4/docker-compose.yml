@@ -17,7 +17,6 @@ services:
       - node.max_local_storage_nodes=6
     volumes:
       - esdata:/usr/share/elasticsearch/data
-      - repo:/tmp
     networks:
       - esnet
     deploy:
