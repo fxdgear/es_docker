@@ -1,0 +1,11 @@
+#!/bin/bash
+set -eo pipefail
+
+if health="$(curl -fsSL "http://kibana:5601/api/status" | jq '.status.overall.state')"; then
+	if [ "$health" = '"green"' ]; then
+		exit 0
+	fi
+	echo >&2 "unexpected health status: $health"
+fi
+
+exit 1

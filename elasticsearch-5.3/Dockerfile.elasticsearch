@@ -13,6 +13,6 @@ RUN chown elasticsearch:elasticsearch bin/es-docker && \
 
 USER elasticsearch
 
-HEALTHCHECK --interval=1s --retries=30 CMD ["/bin/bash", "bin/es-healthcheck"]
+HEALTHCHECK --interval=10s CMD ["/bin/bash", "bin/es-healthcheck"]
 
 CMD ["/bin/bash", "bin/es-docker"]
