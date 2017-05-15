@@ -1,15 +1,13 @@
 version: '3.1'
 services:
   elasticsearch:
-    image: 'fxdgear/elasticsearch:5.3'
+    image: 'fxdgear/elasticsearch:5.4'
     build:
       context: ../
       dockerfile: elasticsearch-5.3/Dockerfile.elasticsearch
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "ES_HOST=http://elasticsearch:9200"
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
     volumes:
       - esdata:/usr/share/elasticsearch/data
     networks:
