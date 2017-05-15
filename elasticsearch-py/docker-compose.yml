@@ -1,0 +1,52 @@
+version: '3.1'
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile-py
+    environment:
+      - "TEST_ES_SERVER=http://elasticsearch:9200"
+    volumes:
+      - .:/code
+      - /tmp:/tmp
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch
+
+  dsl-client:
+    build:
+      context: .
+      dockerfile: Dockerfile-dsl-py
+    environment:
+      - "TEST_ES_SERVER=http://elasticsearch:9200"
+    volumes:
+      - .:/code
+      - /tmp:/tmp
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: fxdgear/elasticsearch:5.3
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./elasticsearch:/code/elasticsearch
+      - /tmp:/tmp
+    networks:
+      - esnet
+    environment:
+      - script.inline=true
+      - path.repo=/tmp
+      - "repositories.url.allowed_urls=http://*"
+      - node.attr.testattr=test
+
+networks:
+  esnet:
+
+volumes:
+  # shared volume between client and Elasticsearch to whitelist the snapshots that will be created during the integration tests
+  repo:
+    driver: local
