@@ -6,9 +6,6 @@ COPY es-healthcheck bin/es-healthcheck
 RUN apk add --update curl && \
     rm -rf /var/cache/apk/*
 
-RUN curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.0.zip
-RUN unzip /tmp/es-snap.zip -d /tmp/
-
 USER root
 
 RUN chown elasticsearch:elasticsearch bin/es-docker && \

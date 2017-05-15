@@ -1,24 +1,19 @@
-version: '3'  
-services:  
+version: '3.1'
+services:
   elasticsearch:
     image: 'fxdgear/elasticsearch:2.4'
+    build:
+      context: ../
+      dockerfile: elasticsearch-5.3/Dockerfile.elasticsearch
     environment:
-      - "http.host=0.0.0.0" 
-      - "transport.host=127.0.0.1"
-      - network.host=0.0.0.0
-      - discovery.zen.ping.unicast.hosts=elasticsearch
-      - discovery.zen.minimum_master_nodes=1
-      - node.attr.testattr=test
-      - script.inline=true
-      - cluster.name=docker-cluster
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "repositories.url.allowed_urls=http://*"
-      - path.repo=/tmp
-      - node.max_local_storage_nodes=6
+      - "ES_HOST=http://elasticsearch:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
     networks:
       - esnet
+    ports:
+        - '9200:9200'
     deploy:
       mode: 'replicated'
       replicas: 1
@@ -30,54 +25,8 @@ services:
             soft: -1
             hard: -1
 
-  kibana:
-    image: 'fxdgear/kibana:4'
-    networks:
-      - esnet
-    deploy:
-      mode: 'replicated'
-      replicas: 1
-
-  nginx:
-    image: 'nginx:1'
-    ports:
-        - '9200:9200'
-        - '5601:5601'
-    networks:
-      - esnet
-    command: |
-      /bin/bash -c "echo '
-      server {
-        listen 5601;
-        location / {
-            proxy_pass http://kibana:5601;
-            proxy_http_version 1.1;
-            proxy_set_header Connection keep-alive;
-            proxy_set_header Upgrade $$http_upgrade;
-            proxy_set_header Host $$host;
-            proxy_set_header X-Real-IP $$remote_addr;
-            proxy_cache_bypass $$http_upgrade;
-        }
-      }
-      server {
-        listen 9200;
-        client_max_body_size 200M;
-        add_header X-Frame-Options "SAMEORIGIN";
-        location / {
-            proxy_pass http://elasticsearch:9200;
-            proxy_http_version 1.1;
-            proxy_set_header Connection keep-alive;
-            proxy_set_header Upgrade $$http_upgrade;
-            proxy_set_header Host $$host;
-            proxy_set_header X-Real-IP $$remote_addr;
-            proxy_cache_bypass $$http_upgrade;
-        }
-      }' | tee /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
-
 volumes:
   esdata:
-    driver: local
-  repo:
     driver: local
 networks:
   esnet:
