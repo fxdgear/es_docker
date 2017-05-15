@@ -1,3 +1,4 @@
 .DS_Store
 elasticsearch-py/elasticsearch/*
 elasticsearch-py/elasticsearch-py/*
+elasticsearch-py/elasticsearch-dsl-py/*
