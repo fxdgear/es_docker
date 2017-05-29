@@ -4,10 +4,11 @@ services:
     image: 'fxdgear/elasticsearch:2.4'
     build:
       context: ../
-      dockerfile: elasticsearch-2.4/Dockerfile.elasticsearch
+      dockerfile: elasticsearch-2.4/Dockerfile
     environment:
+      - "ENV_TAG=--E"
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "ES_HOST=http://elasticsearch:9200"
+      - "ES_HOST=http://localhost:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
     networks:
