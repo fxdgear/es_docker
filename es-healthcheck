@@ -3,7 +3,7 @@ set -eo pipefail
 
 host=${ES_HOST:-"http://localhost:9200"}
 
-if health="$(curl -fsSL "$ES_HOST/_cat/health?h=status")"; then
+if health="$(curl -fsSL "$host/_cat/health?h=status")"; then
 	health="$(echo "$health" | sed -r 's/^[[:space:]]+|[[:space:]]+$//g')" # trim whitespace (otherwise we'll have "green ")
 	if [ "$health" = 'green' ]; then
 		exit 0
