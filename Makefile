@@ -2,11 +2,11 @@
 build: build-elasticsearch build-elasticsearch53 build-elasticsearch24
 
 build-elasticsearch:
-	docker-compose -f elasticsearch-5.4/docker-compose.yml build
+	docker build -t fxdgear/elasticsearch:5.4 -f elasticsearch-5.4/Dockerfile .
 build-elasticsearch53:
-	docker-compose -f elasticsearch-5.4/docker-compose.yml build
+	docker build -t fxdgear/elasticsearch:5.3 -f elasticsearch-5.3/Dockerfile .
 build-elasticsearch24:
-	docker-compose -f elasticsearch-5.4/docker-compose.yml build
+	docker build -t fxdgear/elasticsearch:2.4 -f elasticsearch-2.4/Dockerfile .
 
 run-elasticsearch:
 	docker-compose -f elasticsearch-5.4/docker-compose.yml up -d
