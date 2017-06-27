@@ -1,0 +1,9 @@
+FROM python:latest
+RUN apt-get update && apt-get install git curl
+COPY elasticsearch-py /code/elasticsearch-py
+COPY elasticsearch /code/elasticsearch
+WORKDIR /code/elasticsearch-py
+RUN pip install requests==1.0.0 nose coverage mock pyaml nosexcover ipdb python-dateutil GitPython
+RUN python setup.py develop
+COPY wait-for-elasticsearch.sh /code/wait-for-elasticsearch.sh
+CMD ["/code/wait-for-elasticsearch.sh", "http://elasticsearch:9200", "--", "python", "setup.py", "test"]
