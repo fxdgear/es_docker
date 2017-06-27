@@ -7,7 +7,7 @@ services:
     environment:
       - "TEST_ES_SERVER=http://elasticsearch:9200"
     volumes:
-      - /C/Users/nick/develop/elastic/docker/python-client/elasticsearch-py:/code/elasticsearch-py
+      - ./elasticsearch-py:/code/elasticsearch-py
       - esvol:/tmp
     networks:
       - esnet
@@ -21,7 +21,7 @@ services:
     environment:
       - "TEST_ES_SERVER=http://elasticsearch:9200"
     volumes:
-      - /C/Users/nick/develop/elastic/docker/python-client/elasticsearch-dsl-py:/code/elasticsearch-dsl-py
+      - ./elasticsearch-dsl-py:/code/elasticsearch-dsl-py
       - esvol:/tmp
     networks:
       - esnet
