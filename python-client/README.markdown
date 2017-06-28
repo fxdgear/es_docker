@@ -2,7 +2,7 @@
 
 ## Setup
 
-First you need to clone 3 repositories.
+First you need to clone 3 repositories into this (the direcetory that this README is in) directory.
 
 1. git@github.com:elastic/elasticsearch.git
 2. git@github.com:elastic/elasticsearch-py.git
