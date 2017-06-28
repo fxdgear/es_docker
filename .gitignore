@@ -1,4 +1,2 @@
 .DS_Store
-python-client/elasticsearch/*
-python-client/elasticsearch-py/*
-python-client/elasticsearch-dsl-py/*
+python-client/elasticsearch*
