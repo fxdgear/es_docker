@@ -1,3 +1,7 @@
+client-bash:
+	docker-compose run --rm client bash
+dsl-bash:
+	docker-compose run --rm dsl-client bash
 build:
 	docker-compose build --pull --force-rm --no-cache
 up:
