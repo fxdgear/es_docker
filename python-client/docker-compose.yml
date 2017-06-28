@@ -13,6 +13,7 @@ services:
       - esnet
     depends_on:
       - elasticsearch
+    command: ["true"]
 
   dsl-client:
     build:
@@ -27,6 +28,7 @@ services:
       - esnet
     depends_on:
       - elasticsearch
+    command: ["true"]
 
   elasticsearch:
     image: fxdgear/elasticsearch:latest
