@@ -1,6 +1,7 @@
 version: '3.1'
 services:
   client:
+    image: elasticsearch-py
     build:
       context: .
       dockerfile: Dockerfile-py
@@ -16,6 +17,7 @@ services:
     command: ["true"]
 
   dsl-client:
+    image: elasticsearch-dsl-py
     build:
       context: .
       dockerfile: Dockerfile-dsl-py
