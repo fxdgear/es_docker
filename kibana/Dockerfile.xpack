@@ -1,0 +1,5 @@
+ARG ELASTIC_VERSION=local
+
+FROM fxdgear/kibana:${ELASTIC_VERSION}
+
+RUN kibana plugin install x-pack

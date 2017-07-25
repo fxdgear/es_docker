@@ -33,7 +33,7 @@ services:
     command: ["true"]
 
   elasticsearch:
-    image: fxdgear/elasticsearch:latest
+      image: fxdgear/elasticsearch:${ELASTIC_VERSION:-5.5.0}
     ports:
       - "9200:9200"
     volumes:

@@ -1,13 +1,33 @@
-
-build: build-elasticsearch build-elasticsearch53 build-elasticsearch24
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 build-elasticsearch:
-	docker build -t fxdgear/elasticsearch:5.4 -f elasticsearch-5.4/Dockerfile .
-build-elasticsearch53:
-	docker build -t fxdgear/elasticsearch:5.3 -f elasticsearch-5.3/Dockerfile .
-build-elasticsearch24:
-	docker build -t fxdgear/elasticsearch:2.4 -f elasticsearch-2.4/Dockerfile .
+	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/elasticsearch:$(ELASTIC_VERSION) -f elasticsearch/Dockerfile .
 
+build-elasticsearch-xpack:
+	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/elasticsearch:$(ELASTIC_VERSION)-xpack -f elasticsearch/Dockerfile.xpack .
+
+build-kibana:
+	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/kibana:$(ELASTIC_VERSION) -f kibana/Dockerfile .
+
+build-kibana-xpack:
+	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/kibana:$(ELASTIC_VERSION)-xpack -f kibana/Dockerfile.xpack .
+
+build-es-5.5.0:
+	export ELASTIC_VERSION=5.5.0 && $(MAKE) -f $(THIS_FILE) build-elasticsearch
+
+build-es-5.4.0:
+	export ELASTIC_VERSION=5.4.0 && $(MAKE) -f $(THIS_FILE) build-elasticsearch
+
+build-es-5.3.0:
+	export ELASTIC_VERSION=5.3.0 && $(MAKE) -f $(THIS_FILE) build-elasticsearch
+
+build-es-2.4.0:
+	export ELASTIC_VERSION=5.3.0 && $(MAKE) -f $(THIS_FILE) build-elasticsearch
+
+
+###
+# Ignore everything below
+####
 run-elasticsearch:
 	docker-compose -f elasticsearch-5.4/docker-compose.yml up -d
 run-elasticsearch53:

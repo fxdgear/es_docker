@@ -1,0 +1,12 @@
+#!/bin/bash
+set -eo pipefail
+
+host=${ES_HOST:-"http://localhost:9200"}
+if tagline="$(curl -fsSL "$host" | jq '.tagline')"; then
+	if [ "$tagline" = '"You Know, for Search"' ]; then
+		exit 0
+	fi
+	echo >&2 "unexpected tagline: $tagline"
+fi
+
+exit 1

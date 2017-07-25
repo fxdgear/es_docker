@@ -1,0 +1,15 @@
+ARG ELASTIC_VERSION=local
+
+FROM fxdgear/elasticsearch:${ELASTIC_VERSION}
+
+USER root
+# Install x-pack and also the ingest-{agent,geoip} modules required for Filebeat
+RUN elasticsearch-plugin install --batch x-pack
+RUN elasticsearch-plugin install --batch ingest-user-agent
+RUN elasticsearch-plugin install --batch ingest-geoip
+
+COPY x-pack/log4j2.properties config/x-pack/
+
+RUN chown elasticsearch:elasticsearch config/x-pack/log4j2.properties
+
+USER elasticsearch

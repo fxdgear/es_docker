@@ -1,8 +1,0 @@
-FROM python:3.4-alpine
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh curl
-ADD elasticsearch-dsl-py /code/elasticsearch-dsl-py
-WORKDIR /code/elasticsearch-dsl-py
-RUN pip install -e '.[develop]'
-COPY wait-for-elasticsearch.sh wait-for-elasticsearch.sh
-CMD ["./wait-for-elasticsearch.sh", "http://elasticsearch:9200", "--", "python", "setup.py", "test"]

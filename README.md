@@ -2,10 +2,22 @@
 
 ## Setup
 
-In each `elasticsearch-X` directory is a dockerfile and docker-compose file for creating
-and running an elastic cluster in docker.
+In the `elasticsearch` directory is a `Dockerfile` and `Dockerfile.xpack` file for
+building an Elasticsearch image and Elasticsearch with X-Pack.
 
-To run an elastic search cluster you can do it either in swarm mode or not.
+## Build
+
+To build your ES images you need to run
+```
+export ELASTIC_VERSION=5.5.0 && make build-elasticsearch
+```
+
+To build the ES image with Xpack, first build the base image (above) and then run
+
+```
+export ELASTIC_VERSION=5.5.0 && make build-elasticsearch-xpack
+```
+
 
 
 ### Swarm Mode
