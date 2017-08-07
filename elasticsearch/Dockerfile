@@ -1,13 +1,13 @@
 FROM centos:7
 
-ARG ELASTIC_VERSION=local
+ARG ELASTIC_VERSION=5.5.0
 ENV ELASTIC_VERSION ${ELASTIC_VERSION}
 
 ENV ELASTIC_CONTAINER true
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 ENV JAVA_HOME /usr/lib/jvm/jre-1.8.0-openjdk
 
-RUN yum update -y && yum install -y java-1.8.0-openjdk-headless wget which curl jq && yum clean all
+RUN yum update -y && yum install -y java-1.8.0-openjdk-headless wget which curl jq bind-tools && yum clean all
 RUN wget -O jq http://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && \
     chmod +x ./jq && \
     cp jq /usr/bin
@@ -35,9 +35,9 @@ RUN set -ex && for esdirs in config data logs; do \
 USER elasticsearch
 
 
-COPY elasticsearch/config config/
-COPY elasticsearch/es-docker bin/es-docker
-COPY elasticsearch/es-healthcheck bin/es-healthcheck
+COPY ./config config/
+COPY es-docker bin/es-docker
+COPY es-healthcheck bin/es-healthcheck
 
 USER root
 RUN chown elasticsearch:elasticsearch \

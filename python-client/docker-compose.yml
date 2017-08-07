@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.3'
 services:
   client:
     image: elasticsearch-py
@@ -33,7 +33,7 @@ services:
     command: ["true"]
 
   elasticsearch:
-      image: fxdgear/elasticsearch:${ELASTIC_VERSION:-5.5.0}
+    image: fxdgear/elasticsearch:${ELASTIC_VERSION:-5.5.0}
     ports:
       - "9200:9200"
     volumes:
@@ -45,7 +45,7 @@ services:
       - path.repo=/tmp
       - "repositories.url.allowed_urls=http://*"
       - node.attr.testattr=test
-
+      - bootstrap.memory_lock=false
 networks:
   esnet:
 

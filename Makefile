@@ -1,16 +1,34 @@
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 build-elasticsearch:
-	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/elasticsearch:$(ELASTIC_VERSION) -f elasticsearch/Dockerfile .
+	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/elasticsearch:$(ELASTIC_VERSION) -f elasticsearch/Dockerfile ./elasticsearch
 
-build-elasticsearch-xpack:
+build-elasticsearch-xpack: build-elasticsearch
 	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/elasticsearch:$(ELASTIC_VERSION)-xpack -f elasticsearch/Dockerfile.xpack .
 
 build-kibana:
 	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/kibana:$(ELASTIC_VERSION) -f kibana/Dockerfile .
 
-build-kibana-xpack:
+build-kibana-xpack: build-kibana
 	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/kibana:$(ELASTIC_VERSION)-xpack -f kibana/Dockerfile.xpack .
+
+build-logstash:
+	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/logstash:$(ELASTIC_VERSION) -f logstash/Dockerfile .
+
+build-logstash-xpack:
+	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/logstash:$(ELASTIC_VERSION)-xpack -f logstash/Dockerfile.xpack .
+
+
+
+golang:
+	cd logstash; docker build -t golang:env2yaml build/golang
+
+# Compile "env2yaml", the helper for configuring logstash.yml via environment
+# variables.
+env2yaml: golang
+	cd logstash; docker run --rm -i \
+	  -v ${PWD}/logstash/build/env2yaml:/usr/local/src/env2yaml \
+	  golang:env2yaml
 
 build-es-5.5.0:
 	export ELASTIC_VERSION=5.5.0 && $(MAKE) -f $(THIS_FILE) build-elasticsearch

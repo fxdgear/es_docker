@@ -14,9 +14,6 @@ services:
       - esnet
     ports:
       - "5601:5601"
-    deploy:
-      mode: 'replicated'
-      replicas: 1
 
   elasticsearch:
     image: 'fxdgear/elasticsearch:${ELASTIC_VERSION:-5.5.0}'
@@ -29,16 +26,6 @@ services:
       - esnet
     ports:
       - '9200:9200'
-    deploy:
-      mode: 'replicated'
-      replicas: 1
-      resources:
-        limits:
-          memory: 1g
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
 
 volumes:
   esdata:
