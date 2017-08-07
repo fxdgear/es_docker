@@ -1,0 +1,5 @@
+ARG ELASTIC_VERSION=5.5.0
+
+FROM fxdgear/logstash:${ELASTIC_VERSION}
+
+RUN cd /usr/share/logstash && LOGSTASH_PACK_URL=$PACK_URL logstash-plugin install x-pack

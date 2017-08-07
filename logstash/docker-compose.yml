@@ -1,0 +1,59 @@
+version: '3.1'
+services:
+
+  logstash:
+    image: 'fxdgear/logstash:${ELASTIC_VERSION:-5.5.0}'
+    build:
+      context: ../
+      dockerfile: logstash/Dockerfile
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION:-5.5.0}
+    environment:
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+      - "SERVER_HOST=0.0.0.0"
+    networks:
+      - esnet
+    deploy:
+      mode: 'replicated'
+      replicas: 1
+
+  kibana:
+    image: 'fxdgear/kibana:${ELASTIC_VERSION:-5.5.0}'
+    environment:
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+      - "SERVER_HOST=0.0.0.0"
+    networks:
+      - esnet
+    ports:
+      - "5601:5601"
+    deploy:
+      mode: 'replicated'
+      replicas: 1
+
+  elasticsearch:
+    image: 'fxdgear/elasticsearch:${ELASTIC_VERSION:-5.5.0}'
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_HOST=http://elasticsearch:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+    ports:
+      - '9200:9200'
+    deploy:
+      mode: 'replicated'
+      replicas: 1
+      resources:
+        limits:
+          memory: 1g
+        ulimits:
+          memlock:
+            soft: -1
+            hard: -1
+
+volumes:
+  esdata:
+    driver: local
+networks:
+  esnet:
