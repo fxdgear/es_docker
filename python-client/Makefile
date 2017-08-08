@@ -7,8 +7,10 @@ build:
 up:
 	docker-compose up -d
 
-test-client:
-	docker-compose run client python setup.py test
+test-client3:
+	docker-compose run client3 python setup.py test
+test-client2:
+	docker-compose run client2 python setup.py test
 test-dsl-client:
 	docker-compose run dsl-client python setup.py test
 clean:

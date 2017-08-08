@@ -1,10 +1,26 @@
 version: '3.3'
 services:
-  client:
-    image: elasticsearch-py
+  client2:
+    image: elasticsearch-py:2
     build:
       context: .
-      dockerfile: Dockerfile-py
+      dockerfile: Dockerfile-py.2
+    environment:
+      - "TEST_ES_SERVER=http://elasticsearch:9200"
+    volumes:
+      - ./elasticsearch-py:/code/elasticsearch-py
+      - esvol:/tmp
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch
+    command: ["true"]
+
+  client3:
+    image: elasticsearch-py:3
+    build:
+      context: .
+      dockerfile: Dockerfile-py.3
     environment:
       - "TEST_ES_SERVER=http://elasticsearch:9200"
     volumes:
