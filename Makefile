@@ -18,6 +18,10 @@ build-logstash:
 build-logstash-xpack:
 	docker build --build-arg ELASTIC_VERSION=$(ELASTIC_VERSION) -t fxdgear/logstash:$(ELASTIC_VERSION)-xpack -f logstash/Dockerfile.xpack .
 
+build-stack: build-elasticsearch build-kibana build-logstash
+	@echo "done"
+
+
 
 
 golang:
