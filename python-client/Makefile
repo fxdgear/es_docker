@@ -1,5 +1,7 @@
-client-bash:
-	docker-compose run --rm client bash
+client2-bash:
+	docker-compose run --rm client2 bash
+client3-bash:
+	docker-compose run --rm client3 bash
 dsl-bash:
 	docker-compose run --rm dsl-client bash
 build:
