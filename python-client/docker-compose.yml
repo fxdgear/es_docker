@@ -10,6 +10,7 @@ services:
     volumes:
       - ./elasticsearch-py:/code/elasticsearch-py
       - esvol:/tmp
+      - ./x-pack:/certs
     networks:
       - esnet
     depends_on:
@@ -26,6 +27,7 @@ services:
     volumes:
       - ./elasticsearch-py:/code/elasticsearch-py
       - esvol:/tmp
+      - ./x-pack:/certs
     networks:
       - esnet
     depends_on:
@@ -42,6 +44,7 @@ services:
     volumes:
       - ./elasticsearch-dsl-py:/code/elasticsearch-dsl-py
       - esvol:/tmp
+      - ./x-pack:/certs
     networks:
       - esnet
     depends_on:
@@ -49,7 +52,7 @@ services:
     command: ["true"]
 
   elasticsearch:
-    image: fxdgear/elasticsearch:${ELASTIC_VERSION:-5.5.0}
+    image: fxdgear/elasticsearch:${ELASTIC_VERSION:-6.0.0-beta1}
     ports:
       - "9200:9200"
     volumes:
@@ -61,8 +64,36 @@ services:
       - "repositories.url.allowed_urls=http://*"
       - node.attr.testattr=test
       - bootstrap.memory_lock=false
+
+  elasticsearch-xpack:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+    ports:
+      - "9201:9200"
+    volumes:
+      - esvol:/tmp
+      - ./x-pack:/usr/share/elasticsearch/config/x-pack
+    # user: root
+    networks:
+      esnet:
+        ipv4_address: 172.16.238.10
+    environment:
+      - path.repo=/tmp
+      - "repositories.url.allowed_urls=http://*"
+      - node.attr.testattr=test
+      - bootstrap.memory_lock=false
+      - "xpack.ssl.key=/usr/share/elasticsearch/config/x-pack/elasticsearch-xpack/elasticsearch-xpack.key"
+      - "xpack.ssl.certificate=/usr/share/elasticsearch/config/x-pack/elasticsearch-xpack/elasticsearch-xpack.crt"
+      - "xpack.ssl.certificate_authorities=/usr/share/elasticsearch/config/x-pack/ca/ca.crt"
+      - "xpack.security.http.ssl.enabled=true"
+
 networks:
   esnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.238.0/24
 
 volumes:
   esvol:

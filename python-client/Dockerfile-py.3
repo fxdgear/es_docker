@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3
 RUN apt-get update && apt-get install git curl
 RUN git clone https://github.com/elastic/elasticsearch.git /code/elasticsearch
 RUN pip install ipdb python-dateutil GitPython
