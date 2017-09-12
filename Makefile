@@ -47,6 +47,19 @@ build-es-2.4.0:
 	export ELASTIC_VERSION=5.3.0 && $(MAKE) -f $(THIS_FILE) build-elasticsearch
 
 
+deploy-stack:
+	export ELASTIC_VERSION=$(ELASTIC_VERSION) && \
+		docker-compose \
+			-f elasticsearch/docker-compose.yml \
+			-f kibana/docker-compose.yml \
+		up -d
+
+down-stack:
+	export ELASTIC_VERSION=$(ELASTIC_VERSION) && \
+		docker-compose \
+			-f elasticsearch/docker-compose.yml \
+			-f kibana/docker-compose.yml \
+	    down
 ###
 # Ignore everything below
 ####
