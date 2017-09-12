@@ -1,0 +1,76 @@
+version: "3.3"
+services:
+  # coordinating node. Used for Load balancing across containers
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-beta2
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.minimum_master_nodes=2"
+      - "discovery.zen.ping.unicast.hosts=master"
+      - "bootstrap.memory_lock=false"
+      - "node.master=false"
+      - "node.data=false"
+      - "node.ingest=false"
+    networks:
+       - esnet
+    ports:
+      - target: 9200
+        published: 9200
+        protocol: tcp
+        mode: host
+    deploy:
+      endpoint_mode: dnsrr
+      mode: 'global'
+      resources:
+        limits:
+          memory: 1G
+        ulimits:
+          memlock:
+            soft: -1
+            hard: -1
+  master:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-beta2
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.minimum_master_nodes=2"
+      - "discovery.zen.ping.unicast.hosts=master"
+      - "bootstrap.memory_lock=false"
+      - "node.master=true"
+      - "node.data=true"
+      - "node.ingest=true"
+    networks:
+       - esnet
+    deploy:
+      endpoint_mode: dnsrr
+      mode: 'replicated'
+      replicas: 2
+      resources:
+        limits:
+          memory: 1G
+        ulimits:
+          memlock:
+            soft: -1
+            hard: -1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.0.0-beta2
+    environment:
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+    networks:
+      - esnet
+    ports:
+      - target: 5601
+        published: 5601
+        protocol: tcp
+        mode: host
+    volumes:
+      - ./kibana:/etc/kibana
+    deploy:
+      resources:
+         limits:
+           memory: 1G
+
+
+networks:
+  esnet:
+    driver: overlay
