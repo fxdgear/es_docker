@@ -11,8 +11,11 @@ services:
       - "node.master=false"
       - "node.data=false"
       - "node.ingest=false"
+      - "node.max_local_storage_nodes=3"
     networks:
        - esnet
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
     ports:
       - target: 9200
         published: 9200
@@ -38,8 +41,11 @@ services:
       - "node.master=true"
       - "node.data=true"
       - "node.ingest=true"
+      - "node.max_local_storage_nodes=3"
     networks:
        - esnet
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
     deploy:
       endpoint_mode: dnsrr
       mode: 'replicated'
@@ -71,6 +77,9 @@ services:
            memory: 1G
 
 
+volumes:
+  esdata:
+    driver: local
 networks:
   esnet:
     driver: overlay
