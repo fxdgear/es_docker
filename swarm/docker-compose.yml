@@ -1,16 +1,14 @@
-version: "3.3"
+version: "3.4"
 services:
+  # coordinating node. Used for Load balancing across containers
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-rc1
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.minimum_master_nodes=2"
-      - "discovery.zen.ping.unicast.hosts=master"
-      - "node.master=false"
-      - "node.data=false"
-      - "node.ingest=false"
     networks:
        - esnet
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
     ports:
       - target: 9200
         published: 9200
@@ -22,55 +20,122 @@ services:
       resources:
         limits:
           memory: 1G
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
-  master:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.minimum_master_nodes=2"
-      - "discovery.zen.ping.unicast.hosts=master"
-      - "node.master=true"
-      - "node.data=false"
-      - "node.ingest=false"
-    networks:
-       - esnet
-    deploy:
-      endpoint_mode: dnsrr
-      mode: 'replicated'
-      replicas: 3
-      resources:
-        limits:
-          memory: 1G
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
-  data:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.minimum_master_nodes=2"
-      - "discovery.zen.ping.unicast.hosts=master"
-      - "node.master=false"
-      - "node.data=true"
-      - "node.ingest=false"
-    networks:
-       - esnet
-    deploy:
-      endpoint_mode: dnsrr
-      mode: 'replicated'
-      replicas: 1
-      resources:
-        limits:
-          memory: 1G
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
+    secrets:
+      - source: elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: docker-cluster.key
+        target: /usr/share/elasticsearch/config/x-pack/docker-cluster/docker-cluster.key
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: docker-cluster.crt
+        target: /usr/share/elasticsearch/config/x-pack/docker-cluster/docker-cluster.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/x-pack/ca/ca.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
 
+  master:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-rc1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+       - esnet
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    deploy:
+      endpoint_mode: dnsrr
+      mode: 'replicated'
+      replicas: 2
+      resources:
+        limits:
+          memory: 1G
+    secrets:
+      - source: master.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: docker-cluster.key
+        target: /usr/share/elasticsearch/config/x-pack/docker-cluster/docker-cluster.key
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: docker-cluster.crt
+        target: /usr/share/elasticsearch/config/x-pack/docker-cluster/docker-cluster.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/x-pack/ca/ca.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.0.0-rc1
+    command: "/usr/share/kibana/bin/kibana --cpu.cgroup.path.override=/ --cpuacct.cgroup.path.override=/ -c /usr/share/kibana/config/kibana.yml -c /usr/share/kibana/config/password.yml --elasticsearch.url=https://elasticsearch:9200"
+    networks:
+      - esnet
+    ports:
+      - target: 5601
+        published: 5601
+        protocol: tcp
+        mode: host
+    volumes:
+      - ./kibana:/etc/kibana
+    deploy:
+      resources:
+         limits:
+           memory: 1G
+    secrets:
+      - source: kibana_password
+        target: /usr/share/kibana/config/password.yml
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: ca.crt
+        target: /usr/share/kibana/config/x-pack/ca/ca.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+
+secrets:
+  ca.crt:
+    external: true
+  docker-cluster.crt:
+    external: true
+  docker-cluster.key:
+    external: true
+  master.yml:
+    external: true
+  kibana.yml:
+    external: true
+  elasticsearch.yml:
+    external: true
+  elastic_password:
+    external: true
+  kibana_password:
+    external: true
+  logstash_password:
+    external: true
+
+
+volumes:
+  esdata:
+    driver: local
 networks:
   esnet:
     driver: overlay

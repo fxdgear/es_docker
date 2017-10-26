@@ -1,0 +1,6 @@
+instances:
+  - name: "docker-cluster"
+    dns:
+      - "*"
+      - "master"
+      - "elasticsearch"

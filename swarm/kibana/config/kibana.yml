@@ -1,0 +1,5 @@
+server.name: kibana
+server.host: "0"
+elasticsearch.url: https://elasticsearch:9200
+elasticsearch.username: kibana
+elasticsearch.ssl.certificateAuthorities: /usr/share/kibana/config/x-pack/ca/ca.crt
