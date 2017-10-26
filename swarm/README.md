@@ -32,7 +32,7 @@ instances:
 ```
 
 What is this file doing? Well it's going to create a CA cert and key. It's also going to create
-a client cert and key which can auth against a self signed cert. This client key is going to be called
+a server cert and key which can auth against a self signed cert. This server's key is going to be called
 `docker-cluster`. The SSL keys will have 3 SANs (Subject Alternative Names).
 
 * `*`
@@ -106,7 +106,7 @@ $ docker secret create docker-cluster.crt docker-cluster/docker-cluster.crt
 $ docker secret create docker-cluster.key docker-cluster/docker-cluster.key
 ```
 
-Now we have our CA cert and our client cert and keys loaded into docker secrets. These
+Now we have our CA cert and our server cert and keys loaded into docker secrets. These
 secrets can now be access by services (containers) that have been given access to these
 secrets. We will look at how to use these secrets in the next section.
 
