@@ -1,4 +1,4 @@
-# Elasticsearch 6 in Swarm Mode
+# Elasticsearch 6 in Swarm Mode with SSL/TLS
 
 Deploying Elasticsearch 6 in swarm mode is a fairly heafty task. My goal is to help understand
 the nessisary steps required to make this happen.
