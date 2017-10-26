@@ -82,7 +82,7 @@ Now we can `unzip bundle.zip` and view our certs. If you navigate to the `docker
 directory you can run the following command:
 
 ```bash
-openssl x509 -text -in docker-cluster.crt
+openssl x509 -text -in bundle/docker-cluster/docker-cluster.crt
 ```
 
 And you should be able to see the three SAN we have for this sert:
