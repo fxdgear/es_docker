@@ -1,5 +1,7 @@
 client2-bash:
 	docker-compose run --rm client2 bash
+client26-bash:
+	docker-compose run --rm client26 bash
 client3-bash:
 	docker-compose run --rm client3 bash
 dsl-bash:
@@ -13,6 +15,8 @@ test-client3:
 	docker-compose run client3 python setup.py test
 test-client2:
 	docker-compose run client2 python setup.py test
+test-client26:
+	docker-compose run client26 python setup.py test
 test-dsl-client:
 	docker-compose run dsl-client python setup.py test
 clean:

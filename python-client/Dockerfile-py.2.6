@@ -1,0 +1,10 @@
+FROM dockershelf/python:2.6
+RUN apt-get update && apt-get install -y git curl
+RUN git clone https://github.com/elastic/elasticsearch.git /code/elasticsearch
+RUN pip install ipdb python-dateutil GitPython
+COPY wait-for-elasticsearch.sh /code/wait-for-elasticsearch.sh
+COPY elasticsearch-py /code/elasticsearch-py
+WORKDIR /code/elasticsearch-py
+RUN pip install .[develop]
+RUN python setup.py develop
+CMD ["/code/wait-for-elasticsearch.sh", "http://elasticsearch:9200", "--", "python", "setup.py", "test"]

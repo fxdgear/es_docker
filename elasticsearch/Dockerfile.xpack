@@ -1,15 +1,9 @@
-ARG ELASTIC_VERSION=local
+ARG ELASTIC_VERSION=6.0.0-rc1
 
-FROM fxdgear/elasticsearch:${ELASTIC_VERSION}
-
+FROM docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
 USER root
-# Install x-pack and also the ingest-{agent,geoip} modules required for Filebeat
-RUN elasticsearch-plugin install --batch x-pack
-RUN elasticsearch-plugin install --batch ingest-user-agent
-RUN elasticsearch-plugin install --batch ingest-geoip
-
-COPY x-pack/log4j2.properties config/x-pack/
-
-RUN chown elasticsearch:elasticsearch config/x-pack/log4j2.properties
-
+COPY x-pack/ca /usr/share/elasticsearch/config/x-pack/ca
+COPY x-pack/elasticsearch /usr/share/elasticsearch/config/x-pack/elasticsearch
+COPY x-pack/master /usr/share/elasticsearch/config/x-pack/master
+RUN chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/config/x-pack
 USER elasticsearch

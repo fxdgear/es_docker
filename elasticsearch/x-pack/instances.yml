@@ -1,0 +1,4 @@
+instances:
+  - name: "docker-cluster"
+    dns:
+      - "*.elasticstack_esnet"

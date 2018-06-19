@@ -1,48 +1,18 @@
 version: '3.3'
 services:
-  client2:
-    image: elasticsearch-py:2
+  client:
+    image: fxdgear/elasticsearch-py:${PYTHON_VERSION:-3}
     build:
       context: .
-      dockerfile: Dockerfile-py.2
+      dockerfile: Dockerfile
+      args:
+          PYTHON_VERSION: ${PYTHON_VERSION:-3}
+    dns:
+      - 8.8.8.8
     environment:
       - "TEST_ES_SERVER=http://elasticsearch:9200"
     volumes:
       - ./elasticsearch-py:/code/elasticsearch-py
-      - esvol:/tmp
-      - ./x-pack:/certs
-    networks:
-      - esnet
-    depends_on:
-      - elasticsearch
-    command: ["true"]
-
-  client3:
-    image: elasticsearch-py:3
-    build:
-      context: .
-      dockerfile: Dockerfile-py.3
-    environment:
-      - "TEST_ES_SERVER=http://elasticsearch:9200"
-    volumes:
-      - ./elasticsearch-py:/code/elasticsearch-py
-      - esvol:/tmp
-      - ./x-pack:/certs
-    networks:
-      - esnet
-    depends_on:
-      - elasticsearch
-    command: ["true"]
-
-  dsl-client:
-    image: elasticsearch-dsl-py
-    build:
-      context: .
-      dockerfile: Dockerfile-dsl-py
-    environment:
-      - "TEST_ES_SERVER=http://elasticsearch:9200"
-    volumes:
-      - ./elasticsearch-dsl-py:/code/elasticsearch-dsl-py
       - esvol:/tmp
       - ./x-pack:/certs
     networks:
@@ -52,9 +22,20 @@ services:
     command: ["true"]
 
   elasticsearch:
-    image: fxdgear/elasticsearch:${ELASTIC_VERSION:-6.0.0-beta1}
-    ports:
-      - "9200:9200"
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:${ELASTIC_VERSION:-6.2.4}
+    volumes:
+      - esvol:/tmp
+    networks:
+      - esnet
+    environment:
+      - path.repo=/tmp
+      - "repositories.url.allowed_urls=http://*"
+      - node.attr.testattr=test
+      - bootstrap.memory_lock=false
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+
+  elasticsearch-basic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-6.2.4}
     volumes:
       - esvol:/tmp
     networks:
@@ -65,8 +46,8 @@ services:
       - node.attr.testattr=test
       - bootstrap.memory_lock=false
 
-  elasticsearch-xpack:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+  elasticsearch-platinum:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:${ELASTIC_VERSION:-6.2.4}
     ports:
       - "9201:9200"
     volumes:

@@ -3,7 +3,7 @@ discovery.zen.ping.unicast.hosts: master
 bootstrap.memory_lock: false
 node.master: true
 node.data: true
-node.ingest: false
+node.ingest: true
 node.max_local_storage_nodes: 3
 xpack.ssl.key: /usr/share/elasticsearch/config/x-pack/docker-cluster/docker-cluster.key
 xpack.ssl.certificate: /usr/share/elasticsearch/config/x-pack/docker-cluster/docker-cluster.crt

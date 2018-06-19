@@ -1,8 +1,8 @@
 version: "3.4"
 services:
   # coordinating node. Used for Load balancing across containers
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-rc1
+  client:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     networks:
@@ -43,7 +43,7 @@ services:
         mode: 0440
 
   master:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-rc1
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     networks:
@@ -80,7 +80,7 @@ services:
         mode: 0440
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.0.0-rc1
+    image: docker.elastic.co/kibana/kibana:6.0.0
     command: "/usr/share/kibana/bin/kibana --cpu.cgroup.path.override=/ --cpuacct.cgroup.path.override=/ -c /usr/share/kibana/config/kibana.yml -c /usr/share/kibana/config/password.yml --elasticsearch.url=https://elasticsearch:9200"
     networks:
       - esnet
@@ -96,6 +96,11 @@ services:
          limits:
            memory: 1G
     secrets:
+      - source: elastic_password
+        target: /usr/share/kibana/config/elastic_password
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
       - source: kibana_password
         target: /usr/share/kibana/config/password.yml
         uid: '1000'

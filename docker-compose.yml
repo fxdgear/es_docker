@@ -2,16 +2,23 @@ version: "3.3"
 services:
   # coordinating node. Used for Load balancing across containers
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-beta2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.1.2
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "discovery.zen.minimum_master_nodes=2"
       - "discovery.zen.ping.unicast.hosts=master"
+      - "network.publish_host=elasticsearch"
       - "bootstrap.memory_lock=false"
       - "node.master=false"
       - "node.data=false"
       - "node.ingest=false"
       - "node.max_local_storage_nodes=3"
+      - "xpack.ssl.key=/usr/share/elasticsearch/config/x-pack/elasticsearch/elasticsearch.key"
+      - "xpack.ssl.certificate=/usr/share/elasticsearch/config/x-pack/elasticsearch/elasticsearch.crt"
+      - "xpack.ssl.certificate_authorities=/usr/share/elasticsearch/config/x-pack/ca/ca.crt"
+      - "xpack.security.transport.ssl.enabled=true"
+      - "xpack.security.http.ssl.enabled=true"
+      - "foobar=$(HOSTNAME)"
     networks:
        - esnet
     volumes:
@@ -27,21 +34,45 @@ services:
       resources:
         limits:
           memory: 1G
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
+    secrets:
+      - source: elasticsearch.crt
+        target: /usr/share/elasticsearch/config/x-pack/elasticsearch/elasticsearch.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: elasticsearch.key
+        target: /usr/share/elasticsearch/config/x-pack/elasticsearch/elasticsearch.key
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/x-pack/ca/ca.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: ca.key
+        target: /usr/share/elasticsearch/config/x-pack/ca/ca.key
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+
   master:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0-beta2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.1.2
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "discovery.zen.minimum_master_nodes=2"
       - "discovery.zen.ping.unicast.hosts=master"
       - "bootstrap.memory_lock=false"
+      - "network.publish_host=master"
       - "node.master=true"
       - "node.data=true"
       - "node.ingest=true"
       - "node.max_local_storage_nodes=3"
+      - "xpack.ssl.key=/usr/share/elasticsearch/config/x-pack/master/master.key"
+      - "xpack.ssl.certificate=/usr/share/elasticsearch/config/x-pack/master/master.crt"
+      - "xpack.ssl.certificate_authorities=/usr/share/elasticsearch/config/x-pack/ca/ca.crt"
+      - "xpack.security.transport.ssl.enabled=true"
+      - "xpack.security.http.ssl.enabled=true"
     networks:
        - esnet
     volumes:
@@ -53,15 +84,32 @@ services:
       resources:
         limits:
           memory: 1G
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
+    secrets:
+      - source: master.crt
+        target: /usr/share/elasticsearch/config/x-pack/master/master.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: master.key
+        target: /usr/share/elasticsearch/config/x-pack/master/master.key
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: ca.crt
+        target: /usr/share/elasticsearch/config/x-pack/ca/ca.crt
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+      - source: ca.key
+        target: /usr/share/elasticsearch/config/x-pack/ca/ca.key
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.0.0-beta2
+    image: docker.elastic.co/kibana/kibana:6.1.2
     environment:
-      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+      - "ELASTICSEARCH_URL=https://elasticsearch:9200"
     networks:
       - esnet
     ports:
@@ -75,6 +123,21 @@ services:
       resources:
          limits:
            memory: 1G
+
+secrets:
+  master.key:
+    external: true
+  master.crt:
+    external: true
+  elasticsearch.crt:
+    external: true
+  elasticsearch.key:
+    external: true
+  ca.key:
+    external: true
+  ca.crt:
+    external: true
+
 
 
 volumes:

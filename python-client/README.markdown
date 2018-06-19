@@ -23,6 +23,12 @@ Build the images
 $ make build
 ```
 
+To build individual elasticsearch python client images:
+
+```bash
+export PYTHON_VERSION=3 && docker build --build-arg VERSION=$PYTHON_VERSION -t fxdgear/elasticsearch-py:$PYTHON_VERSION .
+```
+
 ## Starting ElasticSearch
 
 ```bash
