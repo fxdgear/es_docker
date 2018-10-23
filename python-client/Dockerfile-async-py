@@ -1,7 +1,0 @@
-FROM python:latest
-RUN apt-get update && apt-get install git curl
-ADD elasticsearch-py-async /code/elasticsearch-py-async
-WORKDIR /code/elasticsearch-py-async
-RUN pip install -e '.[develop]'
-COPY wait-for-elasticsearch.sh /code/wait-for-elasticsearch.sh
-CMD ["/code/wait-for-elasticsearch.sh", "http://elasticsearch:9200", "--", "python", "setup.py", "test"]

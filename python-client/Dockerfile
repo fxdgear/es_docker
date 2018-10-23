@@ -1,6 +1,6 @@
 ARG PYTHON_VERSION=3
 FROM python:${PYTHON_VERSION}
-RUN apt-get update && apt-get install git curl
+RUN apt-get update && apt-get install -y git curl
 RUN pip install ipdb python-dateutil GitPython
 
 RUN git clone https://github.com/elastic/elasticsearch.git /code/elasticsearch
